@@ -1,0 +1,219 @@
+// ConsoleApplication3.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+#include "pch.h"
+
+#include <iostream>
+#include <vector>
+#include <stack>
+
+using namespace std;
+
+enum { white, gray, black };
+
+class Vertex
+{
+public:
+	int num;
+	int color = white;
+	vector<Vertex*> adjacents;
+	Vertex(int value) {
+		num = value;
+	}
+};
+
+bool isChainsRepeats(vector<vector<Vertex*> > chains, vector<Vertex*> secChain)
+{
+	for (int i = 0; i < chains.size(); i++) {
+		int countOfRepeats = 0;
+		auto firstChain = chains[i];
+		auto firstChainTop = firstChain.size()-1;
+		if (secChain.size() == firstChain.size()) {
+			cout << "Size: " << firstChain.size() << endl;
+			for (int j = 0; j < secChain.size(); j++) {
+				cout << "Holding " << secChain[j]->num << " and " << firstChain[firstChainTop - j]->num << endl;
+				if ((secChain[j]->num == firstChain[firstChainTop - j]->num) || (secChain[j]->num == firstChain[j]->num))
+					countOfRepeats++;
+			}
+		}
+		if (countOfRepeats == firstChain.size()) {
+			cout << "Chain is doubled" << endl;
+			return true;
+		}
+	}
+	return false;
+}
+
+vector<vector<Vertex*> > DFS(vector<Vertex*> vertList, int beginVert, int endVert)
+{
+	stack<Vertex*> vertexes;
+	vector<Vertex*> chain;
+	vector<vector<Vertex*> > chains;
+	chain.push_back(vertList[beginVert]);
+	vertexes.push(vertList[beginVert]);
+	while (vertexes.size() != 0) {
+		Vertex* bufVert = vertexes.top();
+		bufVert->color = gray;
+		cout << "Vertex number " << bufVert->num << " is incoming" << endl;
+		int chainTop = chain.size() - 1;
+		if (bufVert != chain[chainTop]) {
+			chain.push_back(bufVert);
+		}
+/*-------------Добавление вершины в цепь или сохранение цепи в случае нахождения конечного пункта -------------*/
+		for (int i = 0; i < bufVert->adjacents.size(); i++) {
+			if (bufVert->adjacents[i]->color == white) {
+				if (bufVert->adjacents[i]->num == endVert) {
+					chain.push_back(bufVert->adjacents[i]);
+					vector<Vertex*> bufChain;
+					bufChain = chain;
+					chains.push_back(bufChain);
+					chain.pop_back();
+					cout << "Vertex number " << bufVert->num << " has met a vertex number" << bufVert->adjacents[i]->num << endl;
+				}
+				else {
+					vertexes.push(bufVert->adjacents[i]);
+				}
+			}
+			else {
+				cout << "Vertex number " << bufVert->num << " has met a gray or black Vertex number " << bufVert->adjacents[i]->num << endl;
+			}
+		}
+/*----------Удаление элемента в случае, если он - единственный оставшийся белый из всех, что вокруг него-------------*/
+		if (bufVert->num == vertexes.top()->num) {
+			cout << "Vertex number " << bufVert->num << " ended" << endl;
+			bufVert->color = black;
+			vertexes.pop();
+			chain.pop_back();
+		}
+	}
+	/*---------------------------------------------------------------------------*/
+	for (int i = 1; i < vertList.size(); i++) {
+		vertList[i]->color = white;
+	}
+	/*---------------------------------------------------------------------------*/
+	return chains;
+}
+
+/*vector<vector<Vertex* > > DFSForChain(vector<Vertex*> vertList, int beginVert, int endVert) 
+{
+	vector<vector<Vertex* > > allChains;
+	for (int i = 1; i < vertList.size(); i++) {
+		auto moreChains = DFS(vertList, i, endVert);
+		for (int j = 0; j < moreChains.size(); j++) {
+			if (!isChainsRepeats(allChains, moreChains[j])) {
+				allChains.push_back(moreChains[j]);
+			}
+		}
+		auto bufferAdjacents = vertList[i]->adjacents;
+		vector<Vertex*> anotherBufferAdjacents;
+		for (int j = bufferAdjacents.size() - 1; j >= 0; j--) {
+			anotherBufferAdjacents.push_back(bufferAdjacents[j]);
+		}
+		vertList[i]->adjacents = anotherBufferAdjacents;
+		moreChains = DFS(vertList, i, endVert);
+		for (int j = 0; j < moreChains.size(); j++) {
+			if (!isChainsRepeats(allChains, moreChains[j])) {
+				allChains.push_back(moreChains[j]);
+			}
+		}
+		vertList[i]->adjacents = bufferAdjacents;
+	}
+	return allChains;
+}*/
+
+
+vector<vector<Vertex* > > DFSForOnePointChain(vector<Vertex*> vertList, int first, int second)
+{
+	vector<vector<Vertex* > > allChains;
+	for (int i = 0; i < vertList[first]->adjacents.size(); i++) {
+//		auto moreChains = DFS(vertList, first);
+/*		for (int j = 0; j < moreChains.size(); j++) {
+			if (!isChainsRepeats(allChains, moreChains[j])) {
+				allChains.push_back(moreChains[j]);
+			}
+		}*/
+		auto bufferAdjacents = vertList[first]->adjacents;
+		vector<Vertex*> anotherBufferAdjacents;
+		for (int j = i; j < bufferAdjacents.size()+i; j++) {
+			if (j >= bufferAdjacents.size()) {
+				anotherBufferAdjacents.push_back(bufferAdjacents[j-bufferAdjacents.size()]);
+			}
+			else {
+				anotherBufferAdjacents.push_back(bufferAdjacents[j]);
+			}
+		}
+		vertList[first]->adjacents = anotherBufferAdjacents;
+		auto moreChains = DFS(vertList, first, second);
+		for (int j = 0; j < moreChains.size(); j++) {
+			if (!isChainsRepeats(allChains, moreChains[j])) {
+				allChains.push_back(moreChains[j]);
+			}
+		}
+		vertList[first]->adjacents = bufferAdjacents;
+	}
+	return allChains;
+}
+
+vector<vector<Vertex* > > onlyDisjointChains(vector<Vertex* > vertList, int firstVert, int secVert)
+{
+	auto allChains = DFSForOnePointChain(vertList, firstVert, secVert);
+	vector<vector<Vertex* > > rezultChains;
+	vector<int> notRepeatVector;
+	for (int i = 0; i < allChains.size(); i++) {
+		auto chain = allChains[i];
+		bool notRepeated = true;
+		for (int j = 1; j < chain.size()-1; j++) {
+			int NRVsize = notRepeatVector.size();
+			if (!notRepeatVector.empty()) {
+				for (int it = 0; it < NRVsize; it++) {
+					if (notRepeatVector[it] == chain[j]->num) {
+						notRepeated = false;
+					}
+				}
+			}
+			if (notRepeated) {
+				notRepeatVector.push_back(chain[j]->num);
+			}
+		}
+		if (notRepeated)
+			rezultChains.push_back(chain);
+	}
+	cout << "Not repeat vector is: " << endl;
+	for (int i = 0; i < notRepeatVector.size(); i++) {
+		cout << notRepeatVector[i] << " ";
+	}
+	cout << endl;
+	return rezultChains;
+}
+
+int main()
+{
+	int n = -1;
+	cin >> n;
+	vector<Vertex*> vertexList;
+	for (int i = 0; i <= n; i++) {  //Zero vertex is unused
+		Vertex* bufferVertex = new Vertex(i);
+		vertexList.push_back(bufferVertex);
+	}
+	for (int i = 1; i <= n ; i++) {
+		int buffer;
+		int numbOfVert;
+		cin >> numbOfVert;
+		for (int j = 0; j < numbOfVert; j++) {
+			cin >> buffer;
+			vertexList[i]->adjacents.push_back(vertexList[buffer]);
+		}
+	}
+	int firstVert, secVert;
+	cin >> firstVert >> secVert;
+	auto chains = onlyDisjointChains(vertexList,firstVert, secVert);
+	for (int i = 0; i < chains.size(); i++) {
+		auto chain = chains[i];
+		cout << "Chain number " << i + 1 << " is: ";
+		for (int j = 0; j < chain.size(); j++) {
+			Vertex* buffer = chain[j];
+			cout << buffer->num << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
