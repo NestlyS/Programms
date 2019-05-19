@@ -1,0 +1,215 @@
+
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+class BinTree
+{
+private:
+	class Node {
+	public:
+		int value;
+		int parent;
+		Node(int val, int par) {
+			value = val;
+			parent = par;
+		}
+	};
+	//Далее значения INT_MIN+1 означает, что элемента нет, а INT_MIN - что это значение мнимого элемента
+	vector<Node> ElArr; //Первый элемент пары - значение, второй - указатель на родителя
+	
+	pair<int, int> ReturnSonIndex(Node element) {
+		auto p = make_pair(INT_MIN+1, INT_MIN+1);  //Пара индексов детей левого и правого. Могут быть INT_MIN+1-INT_MIN+1, value-INT_MIN+1, NULL-value, value-value
+		for (int i = 0; i < ElArr.size(); i++) {
+			if (ElArr[i].parent == element.value) {
+				if (p.first == INT_MIN+1) {
+					p.first = i;
+				}
+				else {
+					p.second = i;
+				}
+			}
+		}
+		return p;
+	}
+
+	void Insert(int value, Node parentElement) {
+		auto sons = ReturnSonIndex(parentElement);
+		if (parentElement.value > value) {
+			if (sons.first == INT_MIN+1) {   //У этого элемента левого сына нет, создаем новый
+				Node new_Node(value, parentElement.value);
+				ElArr.push_back(new_Node);
+				size++;
+			}
+			else {
+				if (ElArr[sons.first].value == INT_MIN) { //Левый сын - мнимый
+					ElArr[sons.first].value = value;
+					size++;
+				}
+				else { //В конечном случае, если левый сын вообще есть и он не мнимый
+					Insert(value, ElArr[sons.first]);
+				}
+			}
+		}
+		else {
+			if (parentElement.value < value) {
+				if (sons.second == INT_MIN+1) {   //У этого элемента правого сына нет, создаем новый плюс фальшивый левый
+					Node new_Node(value, parentElement.value);
+					Node new_Node_false(INT_MIN, parentElement.value);
+					ElArr.push_back(new_Node_false);
+					ElArr.push_back(new_Node);
+					size++;
+				}
+				else {
+					Insert(value, ElArr[sons.second]);  //Если правый сын есть, то спускаемся по дереву
+				}
+			}
+		}
+	}
+
+	void DirectTraversal(int currentIndexElement)
+	{
+		auto sons = ReturnSonIndex(ElArr[currentIndexElement]);
+		cout << ElArr[currentIndexElement].value << " ";
+		if (sons.first != INT_MIN + 1 && ElArr[sons.first].value != INT_MIN) {   //Если есть левое поддерево
+			DirectTraversal(sons.first);
+		}
+		if (sons.second != INT_MIN + 1 && ElArr[sons.second].value != INT_MIN) {  //Если есть правое поддерево
+			DirectTraversal(sons.second);
+		}
+	}
+
+	void SymmetricTraversal(int currentIndexElement)
+	{
+		auto sons = ReturnSonIndex(ElArr[currentIndexElement]);
+		if (sons.first != INT_MIN + 1 && ElArr[sons.first].value != INT_MIN) {   //Если есть левое поддерево
+			SymmetricTraversal(sons.first);
+		}
+		cout << ElArr[currentIndexElement].value << " ";
+		if (sons.second != INT_MIN + 1 && ElArr[sons.second].value != INT_MIN) {  //Если есть правое поддерево
+			SymmetricTraversal(sons.second);
+		}
+	}
+
+	void ReversalTraversalInsert(int currentIndexElement, BinTree* A)
+	{
+		auto sons = ReturnSonIndex(ElArr[currentIndexElement]);
+		if (sons.first != INT_MIN + 1 && ElArr[sons.first].value != INT_MIN) {   //Если есть левое поддерево
+			ReversalTraversalInsert(sons.first, A);
+		}
+		if (sons.second != INT_MIN + 1 && ElArr[sons.second].value != INT_MIN) {  //Если есть правое поддерево
+			ReversalTraversalInsert(sons.second, A);
+		}
+		A->Insert(ElArr[currentIndexElement].value);
+	}
+
+public:
+	
+	int size;
+
+	BinTree() {
+		size = 0;
+	}
+
+	void Insert(int value) {
+		if (ElArr.size() == 0) {   //Если вообще массив пустой
+			Node root_Node(value, INT_MIN);
+			ElArr.push_back(root_Node);
+			size++;
+		}
+		else {
+			auto sons = ReturnSonIndex(ElArr[0]);
+			if (ElArr[0].value > value) {
+				if (sons.first == INT_MIN+1) {   //У этого элемента левого сына нет, создаем новый
+					Node new_Node(value, ElArr[0].value);
+					ElArr.push_back(new_Node);
+					size++;
+				}
+				else {
+					if (ElArr[sons.first].value == INT_MIN) { //Левый сын - мнимый
+						ElArr[sons.first].value = value;
+						size++;
+					}
+					else { //В конечном случае, если левый сын вообще есть и он не мнимый, спускаемся по дереву
+						Insert(value, ElArr[sons.first]);
+					}
+				}
+			}
+			else {
+				if (ElArr[0].value < value) {
+					if (sons.second == INT_MIN+1) {   //У этого элемента правого сына нет, создаем новый плюс фальшивый левый
+						Node new_Node(value, ElArr[0].value);
+						Node new_Node_false(INT_MIN, ElArr[0].value);
+						ElArr.push_back(new_Node_false);
+						ElArr.push_back(new_Node);
+						size++;
+					}
+					else {
+						Insert(value, ElArr[sons.second]);  //Если правый сын есть, то спускаемся по дереву
+					}
+				}
+			}
+		}
+	}
+
+	void SymmetricTraversal()
+	{
+		if (ElArr.size() > 0) {
+			auto sons = ReturnSonIndex(ElArr[0]);
+			if (sons.first != INT_MIN + 1  && ElArr[sons.first].value != INT_MIN) {   //Если есть левое поддерево и оно не мнимое
+				SymmetricTraversal(sons.first);
+			}
+			cout << ElArr[0].value << " ";
+			if (sons.second != INT_MIN + 1 && ElArr[sons.second].value != INT_MIN) {  //Если есть правое поддерево
+				SymmetricTraversal(sons.second);
+			}
+		}
+	}
+
+	void DirectTraversal()
+	{
+		if (ElArr.size() > 0) {
+			auto sons = ReturnSonIndex(ElArr[0]);
+			cout << ElArr[0].value << " ";
+			if (sons.first != INT_MIN + 1 && ElArr[sons.first].value != INT_MIN) {   //Если есть левое поддерево
+				DirectTraversal(sons.first);
+			}
+			if (sons.second != INT_MIN + 1 && ElArr[sons.second].value != INT_MIN) {  //Если есть правое поддерево
+				DirectTraversal(sons.second);
+			}
+		}
+	}
+
+	void ReversalTraversalInsert(BinTree* A) {  //Дерево А - куда добавлять элементы
+		if (size > 0) {
+			auto sons = ReturnSonIndex(ElArr[0]);
+			if (sons.first != INT_MIN + 1 && ElArr[sons.first].value != INT_MIN) {
+				ReversalTraversalInsert(sons.first, A);
+			}
+			if (sons.second != INT_MIN + 1 && ElArr[sons.second].value != INT_MIN) {
+				ReversalTraversalInsert(sons.second, A);
+			}
+			A->Insert(ElArr[0].value);
+		}
+	}
+
+};
+
+
+int main()
+{
+	BinTree A;
+	A.Insert(2);	A.Insert(5);	A.Insert(6);
+	A.Insert(4);	A.Insert(0);	A.Insert(1);
+	A.Insert(-2);	A.Insert(-1);
+	BinTree B;
+	B.Insert(10);	B.Insert(11);	B.Insert(12);
+	B.Insert(8);	B.Insert(9);	B.Insert(7);
+	A.DirectTraversal();
+	cout << endl;
+	B.SymmetricTraversal();
+	B.ReversalTraversalInsert(&A);
+	cout << endl;
+	A.DirectTraversal();
+}
