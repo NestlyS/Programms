@@ -1,4 +1,15 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SKY SNAKE — Turbo Flight · Clear Route</title><style>body{background:#071324;margin:0;padding:16px;display:flex;justify-content:center}#ssboost{width:min(100%,1050px)}</style></head><body><div id="ssboost" tabindex="0">
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SKY SNAKE — Turbo Flight · Clear Route</title><style>body{background:#071324;margin:0;padding:16px;display:flex;justify-content:center}#ssboost{width:min(100%,1050px)}
+#ssboost .musicbar{display:flex;gap:11px;align-items:center;flex-wrap:wrap;justify-content:space-between;background:#0c2739;border:1px solid #2e5867;border-radius:10px;padding:9px 11px;margin:9px 3px 2px}
+#ssboost .musicbtn{background:#244e5c;border:1px solid #4d918f;border-radius:8px;padding:7px 12px;color:#d3fff0;font-weight:800;font-size:12px;min-width:100px}
+#ssboost .musicbtn[aria-pressed="false"]{background:#1c354d;border-color:#49667f;color:#a9c6d1}
+#ssboost .musicbar label{display:flex;align-items:center;gap:8px;font-size:11px;color:#c8eae7}
+#ssboost .musicbar input[type="range"]{accent-color:#76f3d3;width:120px;cursor:pointer}
+#ssboost .musicbar output{min-width:34px;font-variant-numeric:tabular-nums;color:#83f5d3}
+#ssboost .musicbar .musicstatus{font-size:10px;color:#a8c5d2;max-width:310px}
+#ssboost .musiccredit{font-size:10px;color:#83a8b9;padding:7px 4px 0;line-height:1.6}
+#ssboost .musiccredit a{color:#9ee8df;text-underline-offset:2px}
+@media(max-width:550px){#ssboost .musicbar{padding:7px;gap:6px}#ssboost .musicbtn{padding:6px;font-size:10px;min-width:80px}#ssboost .musicbar input[type="range"]{width:70px}#ssboost .musiccredit{font-size:9px}}
+</style></head><body><div id="ssboost" tabindex="0">
 <style>
 #ssboost{font-family:system-ui,-apple-system,sans-serif;color:#eafff7;background:linear-gradient(140deg,#132b42,#071527);border:1px solid #345a6c;border-radius:16px;padding:11px;outline:none}
 #ssboost *{box-sizing:border-box}#ssboost button{cursor:pointer;font:inherit}#ssboost .head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:2px 4px 10px}#ssboost .name{font-size:15px;font-weight:900;letter-spacing:.06em}#ssboost .name span{color:#70f1ce}#ssboost small{font-size:9px;color:#86acbd;letter-spacing:.05em}#ssboost .stats{display:flex;gap:12px;align-items:center}#ssboost .stat b{display:block;font-size:16px;font-variant-numeric:tabular-nums}#ssboost .tool{background:#204259;color:#d8fff7;border:1px solid #46748a;border-radius:9px;width:32px;height:32px}#ssboost .stage{position:relative;aspect-ratio:900/530;overflow:hidden;border-radius:12px;background:#071a2b;border:1px solid #315d6c}#ssboost canvas{width:100%;height:100%;display:block}#ssboost .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#041024ba;backdrop-filter:blur(5px)}#ssboost .overlay[hidden]{display:none}#ssboost .panel{text-align:center;background:linear-gradient(145deg,#1a4053,#10233b);border:1px solid #73e6cc70;border-radius:18px;padding:21px;width:min(380px,94%)}#ssboost .panel h3{font-size:25px;line-height:1.15;margin:7px 0;color:#fff}#ssboost .panel p{font-size:12px;color:#b8d4df;line-height:1.45;margin:8px 0 14px}#ssboost .start{border:0;background:#8ff5d9;color:#0b3646;border-radius:10px;padding:10px 23px;font-size:13px;font-weight:850}#ssboost .controlhelp{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:11px 3px 2px;color:#94b8c8;font-size:10px}#ssboost .keys{display:flex;gap:5px}#ssboost .key{display:grid;place-items:center;min-width:37px;height:34px;background:#1b3954;border:1px solid #406781;border-radius:8px;color:#e2ffff;font-size:12px;font-weight:800}#ssboost .key.active{background:#75f5db;color:#0a3441}#ssboost .foot{text-align:center;color:#7ca3b7;font-size:10px;margin-top:8px}#ssboost .boost-key{font-size:11px;min-width:82px;background:#214f5a;border-color:#428f9b;touch-action:none}#ssboost .boost-key.active{background:#a1ffcf;color:#103a42;box-shadow:0 0 14px #66ecca66}#ssboost .stat:last-of-type b{color:#8cffda}
@@ -7,6 +18,13 @@
 <div class="head"><div><div class="name">✦ SKY <span>SNAKE</span> / TURBO</div><small>ПОЛЁТ ОТ ТРЕТЬЕГО ЛИЦА</small></div><div class="stats"><div class="stat"><small>КОЛЬЦО</small><b id="sb-ring">1/7</b></div><div class="stat"><small>КРУГ</small><b id="sb-lap">0</b></div><div class="stat"><small>ВЫСОТА</small><b id="sb-alt">13 м</b></div><div class="stat"><small>СКОРОСТЬ</small><b id="sb-speed">9.2</b></div><button id="sb-pause" class="tool">Ⅱ</button><button id="sb-reset" class="tool">↻</button></div></div>
 <div class="stage"><canvas id="sb-canvas" width="900" height="530"></canvas><div class="overlay" id="sb-overlay"><div class="panel"><small id="sb-kicker">SKY CITY · ИСПРАВЛЕННАЯ ТРАССА</small><h3 id="sb-title">Свободнее и манёвреннее</h3><p id="sb-desc">Кольца теперь расположены в свободном пространстве. W/S — высота, A/D — повороты, Shift — ускорение до 19 м/с.</p><button id="sb-start" class="start">Начать полёт →</button></div></div></div>
 <div class="controlhelp"><span>Плавный разгон · быстрые повороты<br>Красная рамка — раннее предупреждение</span><div class="keys"><span class="key" data-code="KeyW">W ↑</span><span class="key" data-code="KeyA">A ↶</span><span class="key" data-code="KeyS">S ↓</span><span class="key" data-code="KeyD">D ↷</span><button class="key boost-key" id="sb-boostbtn" type="button" aria-label="Удерживать ускорение">⚡ SHIFT</button></div></div><div class="foot">W / S — высота · A / D — поворот · Shift — ускорение · P — пауза</div>
+<div class="musicbar" aria-label="Управление музыкой">
+<button type="button" class="musicbtn" id="sb-music-toggle" aria-pressed="true">♫ Музыка: вкл.</button>
+<label for="sb-music-volume">Громкость <input id="sb-music-volume" type="range" min="0" max="100" step="1" value="30" aria-label="Громкость музыки"><output id="sb-music-value" for="sb-music-volume">30%</output></label>
+<span id="sb-music-status" class="musicstatus" role="status" aria-live="polite">Музыка включится после запуска игры</span>
+</div>
+<div class="musiccredit">♫ <a href="https://vertigoaway.bandcamp.com/track/the-jungle-witch" target="_blank" rel="noopener noreferrer">The Jungle Witch — vertigoaway</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>. Запись не изменена.</div>
+<audio id="sb-music-audio" preload="none" loop src="assets/the-jungle-witch.mp3"></audio>
 </div>
 <script>
 (()=>{
@@ -18,14 +36,56 @@ const defs=[[-23,16.4,-22,23,18.5,-11.5,'#5a89a3'],[-23,0,-22,-18.3,16.4,-11.5,'
 const boxes=defs.map(q=>({a:V(...q.slice(0,3)),b:V(...q.slice(3,6)),color:q[6]}));
 const gates=[{p:V(0,10,-7),n:V(0,0,-1)},{p:V(0,10,-38),n:V(0,0,-1)},{p:V(-12,14,-59),n:V(-1,0,0)},{p:V(-38,12,17),n:V(0,0,1)},{p:V(-7,11,37),n:V(1,0,0)},{p:V(34,11,29),n:V(1,0,0)},{p:V(38,13,-12),n:V(0,0,-1)}];
 let p=V(0,13,12),yaw=0,turn=0,lift=0,speed=CRUISE,cam=V(0,19,31),look=V(0,14,0),basis,trail=[],dist=0,bodyLength=12,food=V(0,13,-1),score=0,active=0,laps=0,lapTime=0,best=0,warning=0,threat=null,clock=0,last=0,mode='menu',spark=[];
+
+ // Music starts after Start button, at 30% of full volume.
+const music=$('sb-music-audio'), musicToggle=$('sb-music-toggle'), musicSlider=$('sb-music-volume'), musicValue=$('sb-music-value'), musicStatus=$('sb-music-status');
+let musicEnabled=true, musicUnavailable=false, musicVolume=.30;
+music.volume=0;
+function refreshMusicUI(){
+ musicToggle.textContent=musicEnabled?'♫ Музыка: вкл.':'♫ Музыка: выкл.';
+ musicToggle.setAttribute('aria-pressed',String(musicEnabled));
+ musicValue.textContent=Math.round(musicVolume*100)+'%';
+ if(musicUnavailable)musicStatus.textContent='MP3 не найден. Для GitHub Pages добавь assets/the-jungle-witch.mp3';
+ else if(!musicEnabled)musicStatus.textContent='Музыка выключена';
+ else if(mode==='play')musicStatus.textContent='♪ The Jungle Witch — vertigoaway';
+ else musicStatus.textContent='Музыка включится после запуска игры';
+}
+function startMusic(rewind=false){
+ if(musicUnavailable||!musicEnabled)return;
+ if(rewind){try{music.currentTime=0;}catch(_){}}
+ music.play()?.catch(err=>{
+  if(err?.name==='AbortError')return;
+  if(err?.name==='NotSupportedError'){musicUnavailable=true;refreshMusicUI();return;}
+  musicStatus.textContent='Нажми кнопку музыки для воспроизведения';
+ });
+}
+function fadeMusic(dt){
+ if(musicUnavailable)return;
+ const target=(mode==='play'&&musicEnabled)?musicVolume:0;
+ music.volume+= (target-music.volume)*Math.min(1,dt*(target>music.volume?2.2:5.5));
+ if(target===0&&music.volume<.002){music.volume=0;if(!music.paused)music.pause();}
+}
+music.addEventListener('error',()=>{musicUnavailable=true;refreshMusicUI();});
+musicSlider.addEventListener('input',()=>{
+ musicVolume=Math.max(0,Math.min(1,Number(musicSlider.value)/100));
+ if(musicVolume===0&&!music.paused)music.pause();
+ else if(mode==='play'&&musicEnabled&&music.paused)startMusic();
+ refreshMusicUI();
+});
+musicToggle.addEventListener('click',()=>{
+ musicEnabled=!musicEnabled;
+ if(musicEnabled&&mode==='play')startMusic();
+ refreshMusicUI();
+});
+
 const dir=()=>V(Math.sin(yaw),0,-Math.cos(yaw));
 const isBoost=()=>keys.ShiftLeft||keys.ShiftRight;
 function hud(){$('sb-ring').textContent=(active+1)+'/7';$('sb-lap').textContent=laps;$('sb-alt').textContent=Math.round(p.y)+' м';$('sb-speed').textContent=speed.toFixed(1);}
 function clear(){for(const k in keys)keys[k]=false;root.querySelectorAll('[data-code]').forEach(el=>el.classList.remove('active'));$('sb-boostbtn').classList.remove('active');}
 function overlay(label,title,msg,button){$('sb-kicker').textContent=label;$('sb-title').textContent=title;$('sb-desc').textContent=msg;$('sb-start').textContent=button;$('sb-overlay').hidden=false;}
-function reset(){clear();p=V(0,13,12);yaw=turn=lift=clock=lapTime=warning=0;speed=CRUISE;threat=null;active=laps=score=0;bodyLength=12;food=V(0,13,-1);spark=[];trail=[];for(let i=30;i>=0;i--)trail.push({...add(p,mul(dir(),-i)),d:30-i});dist=30;cam=V(0,19,31);look=V(0,14,0);mode='play';$('sb-overlay').hidden=true;hud();root.focus({preventScroll:true});}
-function pause(){if(mode==='play'){mode='pause';clear();overlay('ПАУЗА','Перерыв в полёте','Маршрут и время остановлены.','Продолжить →');}else if(mode==='pause'){mode='play';$('sb-overlay').hidden=true;root.focus({preventScroll:true});}}
-function die(message){mode='dead';clear();warning=1;overlay('СТОЛКНОВЕНИЕ','Полёт завершён',message+' Пройдено кругов: '+laps+'. Кристаллы: '+score+'.','Начать снова ↻');}
+function reset(startWithMusic=true){clear();p=V(0,13,12);yaw=turn=lift=clock=lapTime=warning=0;speed=CRUISE;threat=null;active=laps=score=0;bodyLength=12;food=V(0,13,-1);spark=[];trail=[];for(let i=30;i>=0;i--)trail.push({...add(p,mul(dir(),-i)),d:30-i});dist=30;cam=V(0,19,31);look=V(0,14,0);mode='play';$('sb-overlay').hidden=true;hud();if(startWithMusic)startMusic(true);refreshMusicUI();root.focus({preventScroll:true});}
+function pause(){if(mode==='play'){mode='pause';clear();refreshMusicUI();overlay('ПАУЗА','Перерыв в полёте','Маршрут и время остановлены.','Продолжить →');}else if(mode==='pause'){mode='play';$('sb-overlay').hidden=true;startMusic();refreshMusicUI();root.focus({preventScroll:true});}}
+function die(message){mode='dead';clear();warning=1;refreshMusicUI();overlay('СТОЛКНОВЕНИЕ','Полёт завершён',message+' Пройдено кругов: '+laps+'. Кристаллы: '+score+'.','Начать снова ↻');}
 function hit(pos,box,r){const a=box.a,b=box.b,x=clamp(pos.x,a.x,b.x)-pos.x,y=clamp(pos.y,a.y,b.y)-pos.y,z=clamp(pos.z,a.z,b.z)-pos.z;return x*x+y*y+z*z<r*r;}
 function spawn(){for(let i=0;i<120;i++){const f=dir(),d=10+Math.random()*18,s=(Math.random()-.5)*9,o=V(p.x+f.x*d-f.z*s,clamp(p.y+(Math.random()-.5)*9,5,TOP-5),p.z+f.z*d+f.x*s);if(Math.abs(o.x)<EDGE-R-6&&Math.abs(o.z)<EDGE-R-6&&!boxes.some(b=>hit(o,b,4))){food=o;return;}}food=V(0,10,0);}
 function sample(back){const aim=dist-back;for(let i=trail.length-1;i>0;i--)if(trail[i-1].d<=aim){const a=trail[i-1],b=trail[i];return mix(a,b,clamp((aim-a.d)/(b.d-a.d||1),0,1));}return trail[0]||p;}
@@ -101,13 +161,13 @@ if(speed>CRUISE+.3){c.fillStyle='#a6ffe0';c.font='bold 14px system-ui';c.fillTex
 if(warning>.015&&mode==='play'){c.save();const alpha=clamp(warning*.95+.18,.18,1);c.fillStyle='#200b1bc4';c.beginPath();c.roundRect(293,55,314,38,10);c.fill();c.textAlign='center';c.fillStyle='rgba(255,195,205,'+alpha+')';c.font='bold 16px system-ui';c.fillText('⚠ '+threat.name+' · '+Math.max(0,threat.distance).toFixed(1)+' м',450,80);c.restore();}
 const intensity=warning*(.87+.13*Math.sin(clock*11));if(intensity>.014&&mode==='play'){const g=c.createRadialGradient(450,265,120,450,265,560);g.addColorStop(0,'rgba(255,12,35,0)');g.addColorStop(.52,'rgba(255,12,35,0)');g.addColorStop(1,'rgba(255,36,64,.95)');c.save();c.globalAlpha=.25+intensity*.75;c.fillStyle=g;c.fillRect(0,0,W,H);c.strokeStyle='rgba(255,70,92,'+clamp(.25+intensity*.75,0,1)+')';c.shadowColor='#ff1f4c';c.shadowBlur=15*intensity;c.lineWidth=6+18*intensity;c.strokeRect(5,5,W-10,H-10);c.restore();}}
 root.getState=()=>({p:{...p},yaw,turn,lift,warning,threat,mode,edge:EDGE,top:TOP});
-function frame(now){const dt=Math.min(.04,(now-last)/1000||0);last=now;clock+=dt;if(mode==='play'){for(let i=0,n=Math.max(1,Math.ceil(dt/.013));i<n;i++){update(dt/n);if(mode!=='play')break;}}camera(dt);drawWorld();objects();drawBoost();for(let i=spark.length-1;i>=0;i--){const o=spark[i];o.life-=dt;if(o.life<=0){spark.splice(i,1);continue;}o.p=add(o.p,V(Math.cos(o.a)*o.v*dt,Math.sin(o.a)*o.v*dt,0));ball(o.p,.09,'#fff2b4');}drawHUD();requestAnimationFrame(frame);}
+function frame(now){const dt=Math.min(.04,(now-last)/1000||0);last=now;clock+=dt;if(mode==='play'){for(let i=0,n=Math.max(1,Math.ceil(dt/.013));i<n;i++){update(dt/n);if(mode!=='play')break;}}fadeMusic(dt);camera(dt);drawWorld();objects();drawBoost();for(let i=spark.length-1;i>=0;i--){const o=spark[i];o.life-=dt;if(o.life<=0){spark.splice(i,1);continue;}o.p=add(o.p,V(Math.cos(o.a)*o.v*dt,Math.sin(o.a)*o.v*dt,0));ball(o.p,.09,'#fff2b4');}drawHUD();requestAnimationFrame(frame);}
 function key(e,on){if(Object.hasOwn(keys,e.code)){if(mode!=='play')return;e.preventDefault();keys[e.code]=on;if(e.code==='ShiftLeft'||e.code==='ShiftRight')$('sb-boostbtn').classList.toggle('active',isBoost());else root.querySelector('[data-code="'+e.code+'"]').classList.toggle('active',on);}else if(on&&!e.repeat&&(e.code==='KeyP'||e.code==='Escape')&&(mode==='play'||mode==='pause')){e.preventDefault();pause();}}
 window.addEventListener('keydown',e=>key(e,true));window.addEventListener('keyup',e=>key(e,false));window.addEventListener('blur',clear);document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='play')pause();});
 const boostBtn=$('sb-boostbtn');
 boostBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(mode!=='play')return;keys.ShiftLeft=true;boostBtn.classList.add('active');try{boostBtn.setPointerCapture(e.pointerId);}catch(_){}});
 for(const ev of ['pointerup','pointercancel','lostpointercapture'])boostBtn.addEventListener(ev,()=>{keys.ShiftLeft=false;boostBtn.classList.toggle('active',keys.ShiftRight);});
-$('sb-start').onclick=()=>mode==='pause'?pause():reset();$('sb-reset').onclick=reset;$('sb-pause').onclick=()=>{if(mode==='play'||mode==='pause')pause();};reset();mode='menu';$('sb-overlay').hidden=false;requestAnimationFrame(frame);
+$('sb-start').onclick=()=>mode==='pause'?pause():reset();$('sb-reset').onclick=reset;$('sb-pause').onclick=()=>{if(mode==='play'||mode==='pause')pause();};reset(false);mode='menu';music.pause();music.currentTime=0;music.volume=0;refreshMusicUI();$('sb-overlay').hidden=false;requestAnimationFrame(frame);
 })();
 </script>
 </body></html>
